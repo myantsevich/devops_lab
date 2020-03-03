@@ -7,4 +7,3 @@ result = [
     if '0' not in str(x) and all((x % int(char) == 0 for char in str(x)))
 ]
 print(result)
-
