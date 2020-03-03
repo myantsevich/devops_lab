@@ -1,0 +1,63 @@
+#!/usr/bin/env python
+import psutil
+import json
+import time
+import argparse
+
+
+class SystemState:
+    cpu = None
+    memory = None
+    virtual_memory = None
+    io = None
+    network = None
+
+    def __str__(self):
+        return 'CPU:{}%, Memory:{}GB, Virtual memory:{}GB, IO: {} bytes, Network: {}'.format(self.cpu, self.memory, self.virtual_memory, self.io, self.network)
+
+    def update_state(self):
+        self.cpu = psutil.cpu_percent()
+        self.memory = round(psutil.disk_usage('/').used / (1024 * 1024 * 1024))
+        self.virtual_memory = round(psutil.virtual_memory().used / (1024 * 1024 * 1024))
+        self.io = psutil.disk_io_counters().write_bytes
+        self.network = psutil.net_if_stats()
+
+
+    def to_dict(self):
+        return {
+            'cpu': self.cpu,
+            'memory': self.memory,
+            'virtual_memory': self.virtual_memory,
+            'io': self.io,
+            'network': self.network
+        }
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("format", default='txt', choices=['txt', 'json'], const=1, nargs='?')
+parser.add_argument("interval", default=300, type=int, const=1, nargs='?')
+args = parser.parse_args()
+
+
+sys_state = SystemState()
+snapshot_counter = 0
+
+while True:
+    sys_state.update_state()
+    snapshot_counter += 1
+
+    if args.format == 'txt':
+        filename = 'output.txt'
+        data = 'SNAPSHOT {}: TIMESTAMP: {} {}'.format(snapshot_counter, time.ctime(), sys_state)
+    else:
+        filename = 'output.json'
+        data = sys_state.to_dict()
+        data['snapshot'] = snapshot_counter
+        data['timestamp'] = time.ctime()
+        data = json.dumps(data)
+
+    with open(filename, 'a+') as f:
+        f.write(data)
+        f.close()
+
+    time.sleep(args.interval)
