@@ -12,6 +12,6 @@ How to work with
 </p>
 
 
-**IMPORTANT: This app use your github login  and access token (instead of password). To create your personal token please, make the following simple actions: https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
+**IMPORTANT: This app use your github login  and access token (instead of password). To create your personal token please, make the following simple actions: https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line**
 
 
