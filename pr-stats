@@ -1,0 +1,42 @@
+#! /usr/bin/env python
+import requests
+import argparse
+from datetime import datetime
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("repo", help='Enter a name of some your repo.', const=1, nargs='?')
+parser.add_argument("--name", help='Show full name of your repo', default=False, action='store_true')
+parser.add_argument("--owner", help='Show owner of your repo', default=False, action='store_true')
+parser.add_argument("--created", help='Show creating date of your repo', default=False, action='store_true')
+parser.add_argument("--branch", help='Show full name of your repo',  default=False, action='store_true')
+parser.add_argument("--version", action="version", help="Version", version='v0.1')
+args = parser.parse_args()
+
+user = input('Enter your GIT login: ')
+token = input('Enter your GIT access token: ')
+
+resp = requests.get(f'https://api.github.com/repos/{user}/{args.repo}', auth=(user, token))
+
+if resp.ok:
+    resp = resp.json()
+
+    if args.name:
+        print('Full name of your repo is:', resp['full_name'])
+
+    if args.owner:
+        print('Owner of your repo is:', resp['owner']['login'])
+
+    if args.created:
+        created_at = datetime.strptime(resp['created_at'], '%Y-%m-%dT%H:%M:%SZ')
+        print('Repo was created at:', created_at.strftime('%H:%M:%S %B %d, %Y'))
+
+    if args.branch:
+        resp = requests.get(f'https://api.github.com/repos/{user}/{args.repo}/branches', auth=(user, token))
+
+        if resp.ok:
+            print('Branches of your repo:', [x['name'] for x in resp.json()])
+        else:
+            print(f'Failed to get branches list, status code {resp.status_code}. Response: {resp.text}')
+else:
+    print(f'Failed to get repo info, status code {resp.status_code}. Response: {resp.text}')
