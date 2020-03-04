@@ -1,6 +1,6 @@
 Summary
 =======
-Here is a script, which work with GIThub via API
+### Here is a script, which works with GIThub via API
 
 
 How to work with
