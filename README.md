@@ -1,11 +1,11 @@
 Summary
 =======
-### Here is a script, which works with GIThub via API
+Here is a script, which works with GIThub via API
 
 
 How to work with
 =======
-## Example
+#### Example
 
 <p align="center">
   <img src="example.png" width="900px" />
