@@ -58,6 +58,5 @@ while True:
 
     with open(filename, 'a+') as f:
         f.write(data)
-        f.close()
 
     time.sleep(args.interval)
