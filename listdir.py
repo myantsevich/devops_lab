@@ -58,7 +58,8 @@ parser.add_argument("--p", help='Output files from parent directory',
                     default=False, action='store_true')
 parser.add_argument("--lf", help='List files recursively', default=False,
                     action='store_true')
-parser.add_argument("--e", help='Filter by file extension', default='py', type=str, const=1, nargs='?')
+parser.add_argument("--e", help='Filter by file extension', default='py', type=str,
+                    const=1, nargs='?')
 parser.add_argument("--sort", help='Sort files by name or date', default=False,
                     choices=['name', 'date'], const=1,
                     nargs='?')
