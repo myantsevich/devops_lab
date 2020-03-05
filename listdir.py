@@ -1,14 +1,14 @@
 import os
 from datetime import datetime
-
-# output files only from the parent directory
-basepath = '..'
-for entry in os.listdir(basepath):
-    if os.path.isfile(os.path.join(basepath, entry)):
-        print(entry)
+import argparse
 
 
-# list files recursively
+def parent_dir():
+    for file_name in os.listdir('..'):
+        if os.path.isfile(os.path.join('..', file_name)):
+            print(file_name)
+
+
 def list_files(path):
     with os.scandir(path) as entries:
         for entry in entries:
@@ -18,32 +18,23 @@ def list_files(path):
                 list_files(entry.path)
 
 
-list_files('.')
-
-# filter by file extension
-for file_name in os.listdir('.'):
-    if file_name.endswith('.py'):
-        print(file_name)
-
-# order output by filename
-mylist = []
+def extension(ext):
+    ext = '.', ext
+    for file_name in os.listdir('.'):
+        if file_name.endswith(ext):
+            print(file_name)
 
 
-def list_files(path):
+def sort_name(path):
+    mylist = []
     with os.scandir(path) as entries:
         for entry in entries:
             if entry.is_file():
                 mylist.append(str(entry.name))
                 mylist.sort()
             elif entry.is_dir():
-                list_files(entry.path)
-
-
-list_files('.')
-print("\n".join(str(x) for x in mylist))
-
-
-# order output by date of creation
+                sort_name(entry.path)
+    print("\n".join(str(x) for x in mylist))
 
 
 def convert_date(timestamp):
@@ -52,14 +43,40 @@ def convert_date(timestamp):
     return formated_date
 
 
-def list_files(path):
+def sort_date(path):
     with os.scandir(path) as entries:
         for entry in entries:
             if entry.is_file():
                 info = entry.stat()
                 print(f'{convert_date(info.st_mtime)}\t {entry.name} ')
             elif entry.is_dir():
-                list_files(entry.path)
+                sort_date(entry.path)
 
 
-list_files('.')
+parser = argparse.ArgumentParser()
+parser.add_argument("--p", help='Output files from parent directory', default=False, action='store_true')
+parser.add_argument("--lf", help='List files recursively', default=False, action='store_true')
+parser.add_argument("--e", help='Filter by file extension', default='py', type=str, const=1, nargs='?')
+parser.add_argument("--sort", help='Sort files by name or date', default=False, choices=['name', 'date'], const=1,
+                    nargs='?')
+parser.add_argument("--version", action="version", help="Version", version='v0.1')
+args = parser.parse_args()
+
+if args.p:
+    print('Your parent dir contents the following:')
+
+if args.lf:
+    print('Here is all files from this dir and child dirs:')
+    list_files('.')
+
+if args.e:
+    print('Here is all files with extension:')
+    extension(args.e)
+
+if args.sort == 'name':
+    print('Here is all files sorted by name:')
+    sort_name('.')
+
+else:
+    print('Here is all files sorted by date:')
+    sort_date('.')
