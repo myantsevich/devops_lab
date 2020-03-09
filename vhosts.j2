@@ -13,3 +13,7 @@ NameVirtualHost *:80
   </Directory>
 </VirtualHost>
 {% endfor %}
+
+{% if serveradmin %}
+  ServerAdmin {{ serveradmin }}
+{% endif %} 
